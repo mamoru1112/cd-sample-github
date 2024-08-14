@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: greeting
+    app.kubernetes.io/component: greeting
+    app.kubernetes.io/instance: greeting
+  name: greeting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deployment: greeting
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        deployment: greeting
+        sidecar.istio.io/inject: 'true'
+    spec:
+      containers:
+      - image: quay.io/mamoru1112/config-quickstart:latest
+        imagePullPolicy: IfNotPresent
+        name: greeting
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        - containerPort: 8443
+          protocol: TCP
+        volumeMounts:
+        - name: config-vol
+          mountPath: /deployments/config
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: config-vol
+          configMap:
+            name: config

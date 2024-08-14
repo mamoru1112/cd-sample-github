@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+configMapGenerator:
+  - name: config
+    files:
+      - application.properties
+    behavior: replace
+images:
+  - name: quay.io/mamoru1112/config-quickstart
+    newName: quay.io/mamoru1112/config-quickstart
+    newTag: development
